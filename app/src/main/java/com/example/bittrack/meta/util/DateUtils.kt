@@ -1,0 +1,17 @@
+package com.example.bittrack.meta.util
+
+import java.time.LocalDateTime
+import java.time.ZoneId
+
+object DateUtils {
+
+    fun localDateTimeToEpochMillis(timestamp: LocalDateTime): Long {
+        return timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    fun epochMillisToLocalDateTime(timestampMillis: Long): LocalDateTime {
+        return java.time.Instant.ofEpochMilli(timestampMillis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
+    }
+}
