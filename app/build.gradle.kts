@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.google.protobuf)
 }
 
 apply(from = "../versioning.gradle.kts")
@@ -60,6 +61,21 @@ android {
     }
 }
 
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.1"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
+
 dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk)
@@ -79,6 +95,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Proto DataStore
+    implementation(libs.androidx.datastore)
+
+    // Protobuf
+    implementation(libs.protobuf.javalite)
 
     // Hilt
     implementation(libs.dagger.hilt.android)
