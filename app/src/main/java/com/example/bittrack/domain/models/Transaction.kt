@@ -1,6 +1,6 @@
 package com.example.bittrack.domain.models
 
-import com.example.bittrack.meta.model.TransactionCategory
+import com.example.bittrack.core.model.TransactionCategory
 import java.time.LocalDateTime
 
 data class Transaction(

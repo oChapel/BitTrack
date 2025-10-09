@@ -1,7 +1,7 @@
 package com.example.bittrack.data.local
 
 import androidx.room.TypeConverter
-import com.example.bittrack.meta.model.TransactionCategory
+import com.example.bittrack.core.model.TransactionCategory
 
 object Converters {
 

@@ -1,4 +1,4 @@
-package com.example.bittrack.meta.util
+package com.example.bittrack.core.util
 
 import java.time.LocalDateTime
 import java.time.ZoneId

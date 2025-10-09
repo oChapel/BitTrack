@@ -2,7 +2,7 @@ package com.example.bittrack.data.mappers
 
 import com.example.bittrack.data.local.model.TransactionEntity
 import com.example.bittrack.domain.models.Transaction
-import com.example.bittrack.meta.util.DateUtils
+import com.example.bittrack.core.util.DateUtils
 
 fun Transaction.toEntity(): TransactionEntity {
     return TransactionEntity(

@@ -1,4 +1,4 @@
-package com.example.bittrack.meta.model
+package com.example.bittrack.core.model
 
 enum class TransactionCategory(val displayName: String) {
     GROCERIES("Groceries"),

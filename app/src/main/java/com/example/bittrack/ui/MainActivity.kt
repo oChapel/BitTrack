@@ -1,4 +1,4 @@
-package com.example.bittrack
+package com.example.bittrack.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

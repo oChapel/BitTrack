@@ -2,7 +2,7 @@ package com.example.bittrack.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.bittrack.meta.model.TransactionCategory
+import com.example.bittrack.core.model.TransactionCategory
 
 @Entity(tableName = "transactions")
 data class TransactionEntity(
