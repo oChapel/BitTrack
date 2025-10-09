@@ -50,13 +50,24 @@ presentation/
 
 ## ⚙️ Project Setup
 
-1. Clone the repository
+### 1️⃣ Clone the repository
    ```bash
    git clone https://github.com/oChapel/BitTrack.git
+   ```
+### 2️⃣ Setup Secrets
 
+Before running the project, you need to provide your CoinCap API key.
+The key is used to authorize requests to the CoinCap API.
 
-Open the project in Android Studio (Giraffe or newer)
+In the root directory of the project, create a file named secrets.properties:
+   ```bash
+   COINCAP_API_KEY=your_api_key_here
+   ```
 
-Sync Gradle
+⚠️ Never commit this file to Git — it’s already ignored via .gitignore.
 
-Run on device/emulator with API 24+
+### 3️⃣ Run The App
+
+1. Open the project in Android Studio (Giraffe or newer)
+2. Sync Gradle
+3. Run on a device or emulator (API 24+)

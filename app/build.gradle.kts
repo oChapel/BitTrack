@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,15 @@ plugins {
 }
 
 apply(from = "../versioning.gradle.kts")
+
+val secrets = Properties().apply {
+    val f = rootProject.file("secrets.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
+val coinCapKey: String = secrets.getProperty("COINCAP_API_KEY")
+    ?: System.getenv("COINCAP_API_KEY")
+    ?: ""
 
 android {
     namespace = "com.example.bittrack"
@@ -20,6 +31,9 @@ android {
         versionCode = project.extra["versionCode"] as Int
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "COINCAP_API_KEY", "\"$coinCapKey\"")
+        buildConfigField("String", "COINCAP_BASE_URL", "\"https://rest.coincap.io/v3/\"")
     }
 
     buildTypes {
@@ -41,6 +55,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -75,4 +90,9 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
+
+    // Retrofit & OkHttp
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging.interceptor)
 }
