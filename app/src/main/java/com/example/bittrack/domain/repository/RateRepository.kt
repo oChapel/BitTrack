@@ -1,7 +1,9 @@
 package com.example.bittrack.domain.repository
 
+import com.example.bittrack.domain.models.BtcRate
+
 interface RateRepository {
     suspend fun fetchRemoteBtcUsdRate(): Double?
-    suspend fun getCachedBtcUsdRate(): Double
-    suspend fun cacheBtcUsdRate(rate: Double, timestamp: Long)
+    suspend fun getCachedBtcUsdRate(): BtcRate?
+    suspend fun cacheBtcUsdRate(btcRate: BtcRate)
 }

@@ -1,10 +1,12 @@
 package com.example.bittrack.data.repository
 
 import com.example.bittrack.data.local.datastore.BtcRateStore
+import com.example.bittrack.data.mappers.toDomain
+import com.example.bittrack.data.mappers.toProto
 import com.example.bittrack.data.network.CoinCapApi
+import com.example.bittrack.domain.models.BtcRate
 import com.example.bittrack.domain.repository.RateRepository
-import com.example.bittrack.proto.BtcRate
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 class RateRepositoryImpl(
     private val coinCapApi: CoinCapApi,
@@ -15,16 +17,11 @@ class RateRepositoryImpl(
         return coinCapApi.getBitcoinPrice().data.priceUsd.toDoubleOrNull()
     }
 
-    override suspend fun getCachedBtcUsdRate(): Double {
-        return btcRateStore.btcRate.first().rate
+    override suspend fun getCachedBtcUsdRate(): BtcRate? {
+        return btcRateStore.btcRate.firstOrNull()?.toDomain()
     }
 
-    override suspend fun cacheBtcUsdRate(rate: Double, timestamp: Long) {
-        btcRateStore.setBtcRate(
-            BtcRate.newBuilder()
-                .setRate(rate)
-                .setTimestamp(timestamp)
-                .build()
-        )
+    override suspend fun cacheBtcUsdRate(btcRate: BtcRate) {
+        btcRateStore.setBtcRate(btcRate.toProto())
     }
 }

@@ -5,6 +5,8 @@ import java.time.ZoneId
 
 object DateUtils {
 
+    fun nowMillis() = System.currentTimeMillis()
+
     fun localDateTimeToEpochMillis(timestamp: LocalDateTime): Long {
         return timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
