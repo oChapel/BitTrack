@@ -31,4 +31,6 @@ class TransactionRepositoryImpl(
     override suspend fun saveTransaction(transaction: Transaction) {
         transactionDao.save(transaction.toEntity())
     }
+
+    override fun getBalance(): Flow<Double> = transactionDao.getBalance()
 }

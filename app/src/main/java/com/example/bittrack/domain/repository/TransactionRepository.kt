@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface TransactionRepository {
     fun getPagedTransactions(pageSize: Int): Flow<PagingData<Transaction>>
     suspend fun saveTransaction(transaction: Transaction)
+    fun getBalance(): Flow<Double>
 }
