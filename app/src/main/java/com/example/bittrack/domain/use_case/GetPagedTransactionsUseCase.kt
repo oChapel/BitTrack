@@ -10,6 +10,6 @@ class GetPagedTransactionsUseCase @Inject constructor(
     private val transactionRepository: TransactionRepository,
 ) {
     operator fun invoke(): Flow<PagingData<Transaction>> {
-        return transactionRepository.getPagedTransactions(20)
+        return transactionRepository.getPagedTransactions()
     }
 }

@@ -1,7 +1,7 @@
 package com.example.bittrack.core.model
 
 enum class TransactionType {
-    INCOME,
+    DEPOSIT,
     EXPENSE;
 
     companion object {

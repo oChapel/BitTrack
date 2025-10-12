@@ -16,10 +16,10 @@ class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao
 ) : TransactionRepository {
 
-    override fun getPagedTransactions(pageSize: Int): Flow<PagingData<Transaction>> {
+    override fun getPagedTransactions(): Flow<PagingData<Transaction>> {
         return Pager(
             config = PagingConfig(
-                pageSize = pageSize,
+                pageSize = TRANSACTIONS_PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { transactionDao.pagingSource() }
@@ -33,4 +33,8 @@ class TransactionRepositoryImpl(
     }
 
     override fun getBalance(): Flow<Double> = transactionDao.getBalance()
+
+    companion object {
+        private const val TRANSACTIONS_PAGE_SIZE = 20
+    }
 }

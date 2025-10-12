@@ -5,7 +5,7 @@ import com.example.bittrack.domain.models.Transaction
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
-    fun getPagedTransactions(pageSize: Int): Flow<PagingData<Transaction>>
+    fun getPagedTransactions(): Flow<PagingData<Transaction>>
     suspend fun saveTransaction(transaction: Transaction)
     fun getBalance(): Flow<Double>
 }
