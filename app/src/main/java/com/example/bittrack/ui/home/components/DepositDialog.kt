@@ -72,23 +72,15 @@ fun DepositDialog(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Column(
+                BtcAmountInput(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(spacing.s.dp)
-                ) {
-                    Text(
-                        text = "Amount (BTC)",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    BtcAmountInput(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = input,
-                        onValueChange = { input = it.trim().replace(",", ".") }
-                    )
-                }
+                    value = input,
+                    onValueChange = { input = it.trim().replace(",", ".") }
+                )
                 BaseButton(
-                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
                     enabled = input.isNotEmpty() && amount != null,
                     text = "Deposit",
                     onClick = {
