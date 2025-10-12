@@ -1,9 +1,13 @@
 package com.example.bittrack.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,7 +29,7 @@ fun Navigation() {
         navController = navController,
         startDestination = Route.Home.value
     ) {
-        composable(Route.Home.value) {
+        slidingComposable(Route.Home.value) {
             val viewModel: HomeViewModel = hiltViewModel()
             val state = viewModel.uiState.collectAsState().value
 
@@ -37,7 +41,7 @@ fun Navigation() {
             )
         }
 
-        composable(Route.AddTransaction.value) {
+        slidingComposable(Route.AddTransaction.value) {
             val viewModel: AddTransactionViewModel = hiltViewModel()
             val state = viewModel.uiState.collectAsState().value
 
@@ -47,6 +51,43 @@ fun Navigation() {
                 onEvent = viewModel::onEvent
             )
         }
+    }
+}
+
+private fun NavGraphBuilder.slidingComposable(
+    route: String,
+    content: @Composable (NavBackStackEntry) -> Unit
+) {
+    val duration = 300
+
+    composable(
+        route = route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                tween(duration)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                tween(duration)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                tween(duration)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                tween(duration)
+            )
+        }
+    ) {
+        content(it)
     }
 }
 
