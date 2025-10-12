@@ -1,12 +1,12 @@
 package com.example.bittrack.core.model
 
-enum class TransactionCategory(val displayName: String) {
-    NONE("None"),
-    GROCERIES("Groceries"),
-    TAXI("Taxi"),
-    ELECTRONICS("Electronics"),
-    RESTAURANT("Restaurant"),
-    OTHER("Other");
+enum class TransactionCategory(val displayName: String, val emoji: String?) {
+    NONE("None", null),
+    GROCERIES("Groceries", "🍏"),
+    TAXI("Taxi", "🚕"),
+    ELECTRONICS("Electronics", "📱"),
+    RESTAURANT("Restaurant", "🍽️"),
+    OTHER("Other", "📦");
 
     companion object {
         fun fromName(name: String): TransactionCategory =

@@ -9,6 +9,8 @@ object DateUtils {
 
     fun nowMillis() = System.currentTimeMillis()
 
+    fun nowLocalDateTime() = LocalDateTime.now(zoneId)
+
     fun localDateTimeToEpochMillis(timestamp: LocalDateTime): Long {
         return timestamp.atZone(zoneId).toInstant().toEpochMilli()
     }
