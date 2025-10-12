@@ -16,10 +16,10 @@ class AddTransactionUseCase @Inject constructor(
     @IODispatcher private val dispatcher: CoroutineDispatcher
 ) {
     sealed interface AddTransactionRequest {
-        val amount: Double
-        data class Income(override val amount: Double) : AddTransactionRequest
+        val amount: BigDecimal
+        data class Income(override val amount: BigDecimal) : AddTransactionRequest
         data class Expense(
-            override val amount: Double,
+            override val amount: BigDecimal,
             val category: TransactionCategory
         ) : AddTransactionRequest
     }
@@ -30,7 +30,7 @@ class AddTransactionUseCase @Inject constructor(
             is AddTransactionRequest.Expense -> TransactionType.EXPENSE to request.category
         }
         val transaction = Transaction(
-            amount = BigDecimal.valueOf(request.amount),
+            amount = request.amount,
             type = type,
             category = category,
             timestamp = DateUtils.nowLocalDateTime()

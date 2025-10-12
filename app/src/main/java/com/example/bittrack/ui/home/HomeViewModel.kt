@@ -83,7 +83,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun addIncomeTransaction(amount: Double) {
+    private fun addIncomeTransaction(amount: BigDecimal) {
         viewModelScope.launch {
             addTransactionUseCase(AddTransactionUseCase.AddTransactionRequest.Income(amount))
         }

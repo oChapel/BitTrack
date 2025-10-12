@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +24,7 @@ import com.example.bittrack.core.util.Formatting.asBtc
 import com.example.bittrack.core.util.Formatting.asUsd
 import com.example.bittrack.ui.components.BaseButton
 import com.example.bittrack.ui.home.components.BtcRateContainer
+import com.example.bittrack.ui.home.components.DepositDialog
 import com.example.bittrack.ui.home.components.TotalBalanceContainer
 import com.example.bittrack.ui.home.components.TransactionsList
 import com.example.bittrack.ui.model.TransactionRow
@@ -37,8 +42,10 @@ import java.math.BigDecimal
 fun HomeScreen(
     homeState: HomeState,
     transactionsFlow: Flow<PagingData<TransactionRow>>,
+    onEvent: (HomeEvent) -> Unit,
     onAddTransactionClick: () -> Unit
 ) {
+    var showDepositDialog by rememberSaveable { mutableStateOf(false) }
     val lazyPagingTransactions = transactionsFlow.collectAsLazyPagingItems()
     val spacing = LocalSpacing.current
 
@@ -77,6 +84,15 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             transactions = lazyPagingTransactions
         )
+        if (showDepositDialog) {
+            DepositDialog(
+                onConfirm = {
+                    showDepositDialog = false
+                    onEvent(HomeEvent.AddIncomeTransaction(it))
+                },
+                onDismiss = { showDepositDialog = false }
+            )
+        }
     }
 }
 
@@ -96,6 +112,7 @@ fun HomeScreenPreview(
                 isLoading = false
             ),
             transactionsFlow = flowOf(data.transactions),
+            onEvent = {},
             onAddTransactionClick = {}
         )
     }
