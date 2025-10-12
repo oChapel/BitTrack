@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,11 +35,14 @@ fun TransactionListItem(
     Row(
         modifier = modifier
             .shadow(spacing.xs.dp)
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium
+            )
             .border(
                 width = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline,
+                shape = MaterialTheme.shapes.medium
             )
             .padding(horizontal = spacing.m.dp, spacing.s.dp)
             .fillMaxWidth(),

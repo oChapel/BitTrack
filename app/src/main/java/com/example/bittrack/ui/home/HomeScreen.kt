@@ -3,8 +3,11 @@ package com.example.bittrack.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,9 +54,11 @@ fun HomeScreen(
 
     Column(
         modifier = Modifier
+            .fillMaxSize()
             .background(LocalExtendedColors.current.appBackground)
-            .padding(horizontal = spacing.l.dp, vertical = spacing.xxl.dp)
-            .fillMaxWidth(),
+            .padding(horizontal = spacing.l.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(spacing.l.dp, Alignment.Top)
     ) {
         BtcRateContainer(
@@ -63,7 +68,7 @@ fun HomeScreen(
         TotalBalanceContainer(
             balanceText = homeState.balance,
             fiatApproxText = homeState.fiatBalance,
-            onTopUpClick = {} // TODO
+            onTopUpClick = { showDepositDialog = true }
         )
         BaseButton(
             modifier = Modifier.fillMaxWidth(),

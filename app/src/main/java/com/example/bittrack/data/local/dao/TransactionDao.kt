@@ -20,7 +20,7 @@ interface TransactionDao {
     @Query(
         """
             SELECT COALESCE(
-                SUM(CASE WHEN type = 'INCOME' THEN amount ELSE -amount END),
+                SUM(CASE WHEN type = 'DEPOSIT' THEN amount ELSE -amount END),
                 0.0
             ) FROM transactions
         """

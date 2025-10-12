@@ -8,6 +8,7 @@ import com.example.bittrack.data.local.model.TransactionEntity
 
 @Database(
     entities = [TransactionEntity::class],
+    exportSchema = false,
     version = 1
 )
 @TypeConverters(Converters::class)

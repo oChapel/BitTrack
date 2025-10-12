@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -70,11 +71,13 @@ fun AddTransactionScreen(
     }
 
     Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(
-                text = "New Transaction", style = MaterialTheme.typography.titleMedium
-            )
-        },
+        TopAppBar(
+            title = {
+                Text(
+                    text = "New Transaction",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            },
             navigationIcon = {
                 IconButton(
                     onClick = onBack, modifier = Modifier.padding(start = 12.dp)
@@ -94,18 +97,22 @@ fun AddTransactionScreen(
                 .background(LocalExtendedColors.current.appBackground)
                 .padding(padding)
                 .padding(horizontal = spacing.l.dp, vertical = spacing.l.dp)
-                .fillMaxSize(), verticalArrangement = Arrangement.spacedBy(spacing.l.dp)
+                .fillMaxSize()
+                .imePadding(),
+            verticalArrangement = Arrangement.spacedBy(spacing.l.dp)
         ) {
-            BtcAmountInput(modifier = Modifier.fillMaxWidth(),
+            BtcAmountInput(
+                modifier = Modifier.fillMaxWidth(),
                 value = input,
-                onValueChange = { input = it.trim().replace(",", ".") })
+                onValueChange = { input = it.trim().replace(",", ".") },
+                errorText = errorText
+            )
             Column(verticalArrangement = Arrangement.spacedBy(spacing.s.dp)) {
                 Text(
                     text = "Category",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
                 Box {
                     OutlinedButton(
                         onClick = { expanded = !expanded },
@@ -157,10 +164,11 @@ fun AddTransactionScreen(
                 }
             }
             Spacer(Modifier.weight(1f))
-            BaseButton(modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-                enabled = amount != null && errorText != null,
+            BaseButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                enabled = amount != null && errorText == null,
                 text = "Add Transaction",
                 onClick = {
                     amount?.let {
