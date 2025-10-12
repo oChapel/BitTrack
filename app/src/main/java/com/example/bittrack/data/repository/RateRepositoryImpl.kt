@@ -6,7 +6,8 @@ import com.example.bittrack.data.mappers.toProto
 import com.example.bittrack.data.network.CoinCapApi
 import com.example.bittrack.domain.models.BtcRate
 import com.example.bittrack.domain.repository.RateRepository
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RateRepositoryImpl(
     private val coinCapApi: CoinCapApi,
@@ -17,8 +18,9 @@ class RateRepositoryImpl(
         return coinCapApi.getBitcoinPrice().data.priceUsd.toDoubleOrNull()
     }
 
-    override suspend fun getCachedBtcUsdRate(): BtcRate? {
-        return btcRateStore.btcRate.firstOrNull()?.toDomain()
+    override fun getCachedBtcUsdRate(): Flow<BtcRate> {
+        return btcRateStore.btcRate
+            .map { it.toDomain() }
     }
 
     override suspend fun cacheBtcUsdRate(btcRate: BtcRate) {

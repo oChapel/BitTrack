@@ -17,11 +17,12 @@ import com.example.bittrack.ui.mapper.toUi
 import com.example.bittrack.ui.model.TransactionRow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -30,7 +31,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     getPagedTransactionsUseCase: GetPagedTransactionsUseCase,
     getBalanceUseCase: GetBalanceUseCase,
-    private val getBtcRateUseCase: GetBtcRateUseCase,
+    getBtcRateUseCase: GetBtcRateUseCase,
     private val addTransactionUseCase: AddTransactionUseCase
 ) : BaseViewModel<HomeState, HomeEvent>(HomeState()) {
 
@@ -52,10 +53,14 @@ class HomeViewModel @Inject constructor(
             }
             .cachedIn(viewModelScope)
 
-    private val btcRateFlow = MutableStateFlow<BigDecimal?>(null)
+    private val balanceFlow = getBalanceUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BigDecimal.ZERO)
+
+    private val rateFlow = getBtcRateUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     init {
-        combine(getBalanceUseCase(), btcRateFlow) { balance, rate -> balance to rate }
+        combine(balanceFlow, rateFlow) { balance, rate -> balance to rate }
             .onEach { (balance, rate) ->
                 val fiatBalance = rate?.let { "≈ ${it.multiply(balance).asUsd()}" }.orEmpty()
                 updateState {
@@ -71,15 +76,7 @@ class HomeViewModel @Inject constructor(
 
     override fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.GetBtcRate -> getBtcRate()
             is HomeEvent.AddIncomeTransaction -> addIncomeTransaction(event.amount)
-        }
-    }
-
-    private fun getBtcRate() {
-        viewModelScope.launch {
-            val btcRate = getBtcRateUseCase()
-            btcRateFlow.value = btcRate
         }
     }
 
