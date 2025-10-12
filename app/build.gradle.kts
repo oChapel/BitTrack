@@ -83,13 +83,17 @@ dependencies {
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Navigation
+    implementation(libs.androidx.navigation.runtime.android)
+//    implementation(libs.androidx.navigation.compose.jvmstubs)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Paging
     implementation(libs.androidx.paging.compose)
@@ -111,7 +115,6 @@ dependencies {
 
     // Hilt
     implementation(libs.dagger.hilt.android)
-//    implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.dagger.hilt.android.compiler)
 
     // Room
