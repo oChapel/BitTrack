@@ -34,7 +34,10 @@ fun TransactionListItem(
 
     Row(
         modifier = modifier
-            .shadow(spacing.xs.dp)
+            .shadow(
+                elevation = spacing.xs.dp,
+                shape = MaterialTheme.shapes.medium
+            )
             .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = MaterialTheme.shapes.medium

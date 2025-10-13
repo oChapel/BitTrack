@@ -20,6 +20,8 @@ class TransactionRepositoryImpl(
         return Pager(
             config = PagingConfig(
                 pageSize = TRANSACTIONS_PAGE_SIZE,
+                initialLoadSize = TRANSACTIONS_PAGE_SIZE,
+                prefetchDistance = TRANSACTIONS_PAGE_SIZE / 2,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { transactionDao.pagingSource() }
