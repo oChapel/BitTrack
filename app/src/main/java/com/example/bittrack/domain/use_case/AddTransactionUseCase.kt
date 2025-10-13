@@ -1,5 +1,6 @@
 package com.example.bittrack.domain.use_case
 
+import com.example.bittrack.core.handler.Result
 import com.example.bittrack.core.model.TransactionCategory
 import com.example.bittrack.core.model.TransactionType
 import com.example.bittrack.core.util.DateUtils
@@ -17,6 +18,7 @@ class AddTransactionUseCase @Inject constructor(
 ) {
     sealed interface AddTransactionRequest {
         val amount: BigDecimal
+
         data class Income(override val amount: BigDecimal) : AddTransactionRequest
         data class Expense(
             override val amount: BigDecimal,
@@ -24,17 +26,19 @@ class AddTransactionUseCase @Inject constructor(
         ) : AddTransactionRequest
     }
 
-    suspend operator fun invoke(request: AddTransactionRequest) = withContext(dispatcher) {
-        val (type, category) = when (request) {
-            is AddTransactionRequest.Income -> TransactionType.DEPOSIT to TransactionCategory.NONE
-            is AddTransactionRequest.Expense -> TransactionType.EXPENSE to request.category
+    suspend operator fun invoke(request: AddTransactionRequest): Result<Unit> {
+        return withContext(dispatcher) {
+            val (type, category) = when (request) {
+                is AddTransactionRequest.Income -> TransactionType.DEPOSIT to TransactionCategory.NONE
+                is AddTransactionRequest.Expense -> TransactionType.EXPENSE to request.category
+            }
+            val transaction = Transaction(
+                amount = request.amount,
+                type = type,
+                category = category,
+                timestamp = DateUtils.nowLocalDateTime()
+            )
+            transactionRepository.saveTransaction(transaction)
         }
-        val transaction = Transaction(
-            amount = request.amount,
-            type = type,
-            category = category,
-            timestamp = DateUtils.nowLocalDateTime()
-        )
-        transactionRepository.saveTransaction(transaction)
     }
 }

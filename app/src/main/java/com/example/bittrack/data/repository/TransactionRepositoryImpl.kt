@@ -4,6 +4,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.example.bittrack.core.ext.mapToResult
+import com.example.bittrack.core.handler.Result
+import com.example.bittrack.core.handler.runCatchingForResult
 import com.example.bittrack.data.local.dao.TransactionDao
 import com.example.bittrack.data.mappers.toDomain
 import com.example.bittrack.data.mappers.toEntity
@@ -11,6 +14,7 @@ import com.example.bittrack.domain.models.Transaction
 import com.example.bittrack.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao
@@ -30,11 +34,15 @@ class TransactionRepositoryImpl(
             .map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
-    override suspend fun saveTransaction(transaction: Transaction) {
-        transactionDao.save(transaction.toEntity())
-    }
+    override suspend fun saveTransaction(transaction: Transaction): Result<Unit> =
+        runCatchingForResult {
+            transactionDao.save(transaction.toEntity())
+        }
 
-    override fun getBalance(): Flow<Double> = transactionDao.getBalance()
+    override fun getBalance(): Flow<Result<BigDecimal>> =
+        transactionDao.getBalance()
+            .map { BigDecimal.valueOf(it) }
+            .mapToResult()
 
     companion object {
         private const val TRANSACTIONS_PAGE_SIZE = 20

@@ -5,6 +5,9 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import androidx.paging.map
+import com.example.bittrack.core.ext.combineResults
+import com.example.bittrack.core.ext.onSuccess
+import com.example.bittrack.core.handler.Result
 import com.example.bittrack.core.util.Formatting
 import com.example.bittrack.core.util.Formatting.asBtc
 import com.example.bittrack.core.util.Formatting.asUsd
@@ -18,10 +21,8 @@ import com.example.bittrack.ui.model.TransactionRow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -54,14 +55,23 @@ class HomeViewModel @Inject constructor(
             .cachedIn(viewModelScope)
 
     private val balanceFlow = getBalanceUseCase()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BigDecimal.ZERO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = Result.Success(BigDecimal.ZERO)
+        )
 
     private val rateFlow = getBtcRateUseCase()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = Result.Success(null)
+        )
+
 
     init {
-        combine(balanceFlow, rateFlow) { balance, rate -> balance to rate }
-            .onEach { (balance, rate) ->
+        combineResults(balanceFlow, rateFlow) { balance, rate -> balance to rate }
+            .onSuccess { (balance, rate) ->
                 val fiatBalance = rate?.let { "≈ ${it.multiply(balance).asUsd()}" }.orEmpty()
                 updateState {
                     it.copy(
