@@ -1,6 +1,6 @@
 # 🪙 BitTrack
 
-**BitTrack** is a simple Bitcoin expense tracker created as a test assignment.  
+**BitTrack** is a simple Bitcoin expense tracker.  
 It allows users to top up their Bitcoin balance and record expenses throughout the day.
 
 ---
@@ -20,8 +20,9 @@ It allows users to top up their Bitcoin balance and record expenses throughout t
 - **ViewModel (MVVM)** — state management
 - **Hilt (Dagger)** — dependency injection
 - **Room** — local caching database
-- **Retrofit** — fetch Bitcoin exchange rate
-- **Coroutines + Flow** — asynchronous data handling
+- **Proto DataStore** — persist BTC rate locally
+- **Retrofit** — network layer
+- **Coroutines + Flow** — asynchronous data handling & reactive streams
 - **Unit Tests** — ViewModels covered with tests
 
 ---
@@ -31,14 +32,23 @@ It allows users to top up their Bitcoin balance and record expenses throughout t
 The project follows a clean **MVVM architecture** with clear separation of concerns:
 
 data/
-├─ local/ (Room entities, DAO)
+
+├─ local/ (Room entities, DAO, DataStore)
+
 ├─ remote/ (Retrofit service)
+
 ├─ repository/ (data sources implementation)
+
 domain/
-├─ model/ (pure Kotlin data models)
+
+├─ model/ (Kotlin data models)
+
 ├─ usecase/ (business logic)
+
 presentation/
+
 ├─ ui/ (Jetpack Compose screens)
+
 ├─ viewmodel/ (state management)
 
 
