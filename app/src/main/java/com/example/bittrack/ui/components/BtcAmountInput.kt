@@ -9,9 +9,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.bittrack.R
 import com.example.bittrack.ui.theme.LocalSpacing
 
 @Composable
@@ -27,7 +29,7 @@ fun BtcAmountInput(
         verticalArrangement = Arrangement.spacedBy(spacing.s.dp)
     ) {
         Text(
-            text = "Amount (BTC)",
+            text = stringResource(R.string.amount_label),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -40,7 +42,7 @@ fun BtcAmountInput(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Done
             ),
-            placeholder = { Text("0.00000000") },
+            placeholder = { Text(stringResource(R.string.amount_placeholder)) },
             supportingText = { if (errorText != null) Text(errorText) },
             isError = errorText != null,
             shape = MaterialTheme.shapes.medium

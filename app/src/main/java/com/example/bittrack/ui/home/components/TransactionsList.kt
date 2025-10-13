@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import com.example.bittrack.R
 import com.example.bittrack.ui.model.TransactionRow
 import com.example.bittrack.ui.theme.LocalSpacing
 
@@ -84,13 +86,13 @@ private fun EmptyPlaceholder(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "No transactions yet",
+            text = stringResource(R.string.no_transactions),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(spacing.m.dp))
         Text(
-            "Deposit by clicking the button on top",
+            text = stringResource(R.string.deposit_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

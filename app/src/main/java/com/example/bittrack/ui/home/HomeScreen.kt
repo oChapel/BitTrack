@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -51,7 +52,6 @@ fun HomeScreen(
     var showDepositDialog by rememberSaveable { mutableStateOf(false) }
     val lazyPagingTransactions = transactionsFlow.collectAsLazyPagingItems()
     val spacing = LocalSpacing.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,12 +76,12 @@ fun HomeScreen(
             iconRes = R.drawable.add_icon,
             iconSize = spacing.xxl.dp,
             iconTint = Success,
-            text = "Add Transaction",
+            text = stringResource(R.string.add_transaction),
             textColor = MaterialTheme.colorScheme.onSurface,
             onClick = onAddTransactionClick
         )
         Text(
-            text = "Recent Transactions",
+            text = stringResource(R.string.recent_transactions),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )

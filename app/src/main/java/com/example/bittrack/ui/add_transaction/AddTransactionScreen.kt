@@ -34,8 +34,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.bittrack.R
 import com.example.bittrack.core.model.TransactionCategory
 import com.example.bittrack.core.util.Formatting.asBtc
 import com.example.bittrack.ui.components.BaseButton
@@ -65,33 +67,40 @@ fun AddTransactionScreen(
     val amount = remember(input) {
         runCatching { input.toBigDecimal() }.getOrNull()
     }
+    val amountExceedsBalance = stringResource(
+        R.string.amount_exceeds_balance,
+        addTransactionState.balance.asBtc()
+    )
     val errorText = when {
-        amount != null && amount > addTransactionState.balance -> "Amount exceeds balance (${addTransactionState.balance.asBtc()})"
+        amount != null && amount > addTransactionState.balance -> amountExceedsBalance
         else -> null
     }
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "New Transaction",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBack, modifier = Modifier.padding(start = 12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Success
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.new_transaction_title),
+                        style = MaterialTheme.typography.titleMedium
                     )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = NeutralBgDarker)
-        )
-    }) { padding ->
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.navigation_back),
+                            tint = Success
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = NeutralBgDarker)
+            )
+        }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .background(LocalExtendedColors.current.appBackground)
@@ -109,7 +118,7 @@ fun AddTransactionScreen(
             )
             Column(verticalArrangement = Arrangement.spacedBy(spacing.s.dp)) {
                 Text(
-                    text = "Category",
+                    text = stringResource(R.string.category_label),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -169,7 +178,7 @@ fun AddTransactionScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 enabled = amount != null && errorText == null,
-                text = "Add Transaction",
+                text = stringResource(R.string.add_transaction),
                 onClick = {
                     amount?.let {
                         onEvent(AddTransactionEvent.AddTransaction(amount, category))

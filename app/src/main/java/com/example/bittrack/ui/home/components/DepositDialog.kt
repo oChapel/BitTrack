@@ -19,10 +19,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.bittrack.R
 import com.example.bittrack.ui.components.BaseButton
 import com.example.bittrack.ui.components.BtcAmountInput
 import com.example.bittrack.ui.theme.BitTrackTheme
@@ -68,7 +70,7 @@ fun DepositDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Add Bitcoin",
+                    text = stringResource(R.string.add_bitcoin),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -82,7 +84,7 @@ fun DepositDialog(
                         .fillMaxWidth()
                         .height(48.dp),
                     enabled = input.isNotEmpty() && amount != null,
-                    text = "Deposit",
+                    text = stringResource(R.string.deposit),
                     onClick = {
                         amount?.let(onConfirm)
                         onDismiss()

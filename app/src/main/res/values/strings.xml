@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">BitTrack</string>
+    <string name="amount_exceeds_balance">Amount exceeds balance (%1$s)</string>
+    <string name="amount_label">Amount (BTC)</string>
+    <string name="amount_placeholder">0.00000000</string>
+    <string name="new_transaction_title">New Transaction</string>
+    <string name="navigation_back">Back</string>
+    <string name="category_label">Category</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="recent_transactions">Recent Transactions</string>
+    <string name="no_transactions">No transactions yet</string>
+    <string name="deposit_hint">Deposit by clicking the button on top</string>
+    <string name="total_balance">Total Balance</string>
+    <string name="deposit">Deposit</string>
+    <string name="add_bitcoin">Add Bitcoin</string>
+    <string name="btc_rate_format">1 BTC = %1$s</string>
 </resources>
