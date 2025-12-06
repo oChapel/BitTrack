@@ -37,11 +37,20 @@ fun DepositDialog(
     onConfirm: (BigDecimal) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var input by rememberSaveable { mutableStateOf("") }
-    val amount = remember(input) {
-        runCatching { input.toBigDecimal() }.getOrNull()
-    }
     val spacing = LocalSpacing.current
+
+    var input by rememberSaveable { mutableStateOf("") }
+    val amount = runCatching { input.toBigDecimal() }.getOrNull()
+    val buttonEnabled = input.isNotEmpty() && amount != null
+    val onDepositClick = remember(onConfirm, onDismiss) {
+        {
+            val currentAmount = input.toBigDecimalOrNull()
+            if (currentAmount != null) {
+                onConfirm(currentAmount)
+                onDismiss()
+            }
+        }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -79,20 +88,29 @@ fun DepositDialog(
                     value = input,
                     onValueChange = { input = it.trim().replace(",", ".") }
                 )
-                BaseButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    enabled = input.isNotEmpty() && amount != null,
-                    text = stringResource(R.string.deposit),
-                    onClick = {
-                        amount?.let(onConfirm)
-                        onDismiss()
-                    }
+                ConfirmButton(
+                    enabled = buttonEnabled,
+                    onClick = onDepositClick
                 )
             }
         }
     }
+}
+
+@Composable
+fun ConfirmButton(
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+    BaseButton(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        enabled = enabled,
+        text = stringResource(R.string.deposit),
+        onClick = onClick
+    )
 }
 
 @Preview

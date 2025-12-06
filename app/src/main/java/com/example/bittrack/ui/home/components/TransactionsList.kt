@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,22 +27,32 @@ import com.example.bittrack.R
 import com.example.bittrack.ui.model.TransactionRow
 import com.example.bittrack.ui.theme.LocalSpacing
 
+val contentPadding = PaddingValues(bottom = 12.dp)
+
 @Composable
 fun TransactionsList(
     modifier: Modifier = Modifier,
     transactions: LazyPagingItems<TransactionRow>
 ) {
-    val spacing = 12.dp
-
-    if (transactions.loadState.refresh is LoadState.NotLoading && transactions.itemCount == 0) {
-        EmptyPlaceholder(modifier.padding(24.dp))
-        return
+    val isEmpty by remember {
+        derivedStateOf {
+            transactions.loadState.refresh is LoadState.NotLoading && transactions.itemCount == 0
+        }
     }
 
+    if (isEmpty) EmptyPlaceholder(modifier.padding(24.dp))
+    else TransactionListContent(modifier, transactions)
+}
+
+@Composable
+private fun TransactionListContent(
+    modifier: Modifier,
+    transactions: LazyPagingItems<TransactionRow>
+) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(bottom = spacing),
-        verticalArrangement = Arrangement.spacedBy(spacing)
+        contentPadding = contentPadding,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(
             count = transactions.itemCount,

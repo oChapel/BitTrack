@@ -46,6 +46,7 @@ import com.example.bittrack.ui.theme.BitTrackTheme
 import com.example.bittrack.ui.theme.LocalExtendedColors
 import com.example.bittrack.ui.theme.LocalSpacing
 import com.example.bittrack.ui.theme.NeutralBgDarker
+import com.example.bittrack.ui.theme.Spacing
 import com.example.bittrack.ui.theme.Success
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,50 +57,37 @@ fun AddTransactionScreen(
     onEvent: (AddTransactionEvent) -> Unit
 ) {
     val spacing = LocalSpacing.current
+
     var input by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf(TransactionCategory.GROCERIES) }
     var expanded by remember { mutableStateOf(false) }
-    val dropdownIcon = if (expanded) {
-        Icons.Rounded.KeyboardArrowUp
-    } else {
-        Icons.Rounded.KeyboardArrowDown
-    }
-    val amount = remember(input) {
-        runCatching { input.toBigDecimal() }.getOrNull()
-    }
+
+    val amount = runCatching { input.toBigDecimal() }.getOrNull()
+
     val amountExceedsBalance = stringResource(
         R.string.amount_exceeds_balance,
         addTransactionState.balance.asBtc()
     )
+
     val errorText = when {
         amount != null && amount > addTransactionState.balance -> amountExceedsBalance
         else -> null
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.new_transaction_title),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.padding(start = 12.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.navigation_back),
-                            tint = Success
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = NeutralBgDarker)
-            )
+    val enabled = amount != null && errorText == null
+
+    val onConfirmClick = remember(onEvent, onBack, addTransactionState.balance, category) {
+        {
+            val currentAmount = input.toBigDecimalOrNull()
+            if (currentAmount != null && currentAmount <= addTransactionState.balance) {
+                onEvent(AddTransactionEvent.AddTransaction(currentAmount, category))
+                onBack()
+            }
         }
+    }
+
+    Scaffold(
+        topBar = { AddTransactionTopBar(onBack = onBack) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -110,83 +98,162 @@ fun AddTransactionScreen(
                 .imePadding(),
             verticalArrangement = Arrangement.spacedBy(spacing.l.dp)
         ) {
-            BtcAmountInput(
-                modifier = Modifier.fillMaxWidth(),
-                value = input,
-                onValueChange = { input = it.trim().replace(",", ".") },
-                errorText = errorText
+            AmountSection(
+                input = input,
+                errorText = errorText,
+                onInputChange = { input = it.trim().replace(",", ".") }
             )
-            Column(verticalArrangement = Arrangement.spacedBy(spacing.s.dp)) {
-                Text(
-                    text = stringResource(R.string.category_label),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Box {
-                    OutlinedButton(
-                        onClick = { expanded = !expanded },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(spacing.s.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = category.emoji.orEmpty(),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = category.displayName,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Icon(
-                                imageVector = dropdownIcon,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
 
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        TransactionCategory.entries.filter { it != TransactionCategory.NONE }
-                            .forEach { categoryItem ->
-                                DropdownMenuItem(text = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        categoryItem.emoji?.let { Text(it) }
-                                        Text(categoryItem.displayName)
-                                    }
-                                }, onClick = {
-                                    category = categoryItem
-                                    expanded = false
-                                })
-                            }
-                    }
+            CategorySection(
+                spacing = spacing,
+                category = category,
+                expanded = expanded,
+                onMenuClick = { expanded = !expanded },
+                onDismiss = { expanded = false },
+                onCategorySelected = {
+                    category = it
+                    expanded = false
                 }
-            }
+            )
+
             Spacer(Modifier.weight(1f))
-            BaseButton(
+
+            ConfirmButton(
+                enabled = enabled,
+                onClick = onConfirmClick
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddTransactionTopBar(onBack: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.new_transaction_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.padding(start = 12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.navigation_back),
+                    tint = Success
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors()
+            .copy(containerColor = NeutralBgDarker)
+    )
+}
+
+@Composable
+private fun AmountSection(
+    input: String,
+    errorText: String?,
+    onInputChange: (String) -> Unit
+) {
+    BtcAmountInput(
+        modifier = Modifier.fillMaxWidth(),
+        value = input,
+        onValueChange = { onInputChange(it.trim().replace(",", ".")) },
+        errorText = errorText
+    )
+}
+
+@Composable
+private fun CategorySection(
+    spacing: Spacing,
+    category: TransactionCategory,
+    expanded: Boolean,
+    onMenuClick: () -> Unit,
+    onDismiss: () -> Unit,
+    onCategorySelected: (TransactionCategory) -> Unit
+) {
+    val dropdownIcon = if (expanded) {
+        Icons.Rounded.KeyboardArrowUp
+    } else {
+        Icons.Rounded.KeyboardArrowDown
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(spacing.s.dp)) {
+        Text(
+            text = stringResource(R.string.category_label),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Box {
+            OutlinedButton(
+                onClick = onMenuClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                enabled = amount != null && errorText == null,
-                text = stringResource(R.string.add_transaction),
-                onClick = {
-                    amount?.let {
-                        onEvent(AddTransactionEvent.AddTransaction(amount, category))
-                        onBack()
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.s.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = category.emoji.orEmpty(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = category.displayName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = dropdownIcon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+                TransactionCategory.entries
+                    .filter { it != TransactionCategory.NONE }
+                    .forEach { categoryItem ->
+                        DropdownMenuItem(
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    categoryItem.emoji?.let { Text(it) }
+                                    Text(categoryItem.displayName)
+                                }
+                            },
+                            onClick = { onCategorySelected(categoryItem) }
+                        )
                     }
-                })
+            }
         }
     }
+}
+
+@Composable
+private fun ConfirmButton(
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+    BaseButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        enabled = enabled,
+        text = stringResource(R.string.add_transaction),
+        onClick = onClick
+    )
 }
 
 @Preview
