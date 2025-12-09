@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +34,8 @@ val contentPadding = PaddingValues(bottom = 12.dp)
 @Composable
 fun TransactionsList(
     modifier: Modifier = Modifier,
-    transactions: LazyPagingItems<TransactionRow>
+    transactions: LazyPagingItems<TransactionRow>,
+    listState: LazyListState = rememberLazyListState()
 ) {
     val isEmpty by remember {
         derivedStateOf {
@@ -41,16 +44,18 @@ fun TransactionsList(
     }
 
     if (isEmpty) EmptyPlaceholder(modifier.padding(24.dp))
-    else TransactionListContent(modifier, transactions)
+    else TransactionListContent(modifier, transactions, listState)
 }
 
 @Composable
 private fun TransactionListContent(
     modifier: Modifier,
-    transactions: LazyPagingItems<TransactionRow>
+    transactions: LazyPagingItems<TransactionRow>,
+    listState: LazyListState
 ) {
     LazyColumn(
         modifier = modifier,
+        state = listState,
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
